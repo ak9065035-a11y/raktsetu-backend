@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RaktSetu — Find Blood. Save Lives.</title>
+<meta name="description" content="RaktSetu blood donor finder">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--bg:#050508;--card:#0d0e14cc;--line:#ffffff18;--red:#ff315b;--hot:#ff6c85;--soft:#ffb0bd;--text:#fafafd;--muted:#9295a2;--green:#58e1a1;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Manrope,Arial,sans-serif;overflow-x:hidden}button,input,select{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}
+body:before{content:"";position:fixed;inset:0;z-index:-10;background:radial-gradient(circle at 50% 10%,#4d071a 0,transparent 32%),radial-gradient(circle at 85% 80%,#18050e 0,transparent 35%),#050508}
+.grid{position:fixed;inset:0;z-index:-8;opacity:.34;background-image:linear-gradient(#fff1 1px,transparent 1px),linear-gradient(90deg,#fff1 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(#000,transparent 85%);animation:grid 22s linear infinite}
+@keyframes grid{to{background-position:72px 72px}}
+.noise{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.cursor{position:fixed;z-index:100;width:18px;height:18px;border:1px solid #ff6c85aa;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;mix-blend-mode:screen;transition:.15s}.cursorDot{position:fixed;z-index:101;width:4px;height:4px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);pointer-events:none}
+@media(max-width:800px){.cursor,.cursorDot{display:none}}
+
+.logo{font-weight:800;font-size:20px;letter-spacing:-.06em}.logo span{color:var(--red)}
+.mono{font-family:"DM Mono",monospace}
+.eyebrow{font:500 10px "DM Mono";letter-spacing:.17em;color:#ff8096}
+.btn{border:1px solid var(--line);border-radius:999px;padding:12px 17px;background:#ffffff08;color:#fff;font-size:12px;transition:.25s}.btn:hover{transform:translateY(-2px);border-color:#ff557080}.btn.primary{background:linear-gradient(100deg,#ff315b,#ff91a5);border-color:transparent;color:#26030b;font-weight:800;box-shadow:0 12px 40px #ff315b30}.btn.block{width:100%;border-radius:14px;padding:16px}
+
+#login{position:fixed;inset:0;z-index:80;display:grid;place-items:center;overflow:hidden;background:#020205;transition:opacity .8s var(--ease),visibility .8s}.login-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.loginHalo{position:absolute;width:min(80vw,1000px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#ffb2bf00 0 25%,#ff315b16 48%,transparent 70%);filter:blur(8px);animation:halo 5s ease-in-out infinite}
+@keyframes halo{50%{transform:scale(1.08);filter:blur(15px)}}
+.cell{position:absolute;width:min(35vw,390px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 33% 28%,#ffd1d8 0 2%,#ff8ca0 8%,#ef315a 27%,#9c0b31 57%,#360511 76%,transparent 77%);box-shadow:inset 38px 38px 70px #ffbbc644,inset -45px -50px 90px #180008,0 0 130px #ff174d55;animation:cell 7s ease-in-out infinite;left:12%;top:22%}.cell:after{content:"";position:absolute;inset:23%;border-radius:50%;background:radial-gradient(circle,#690821,#27030f 72%);box-shadow:inset 25px 25px 45px #150007}
+@keyframes cell{50%{transform:translateY(-24px) rotate(3deg)}}
+.orbit{position:absolute;width:80vw;max-width:1050px;height:27vw;max-height:360px;border:1px solid #ff5a7630;border-radius:50%;transform:rotate(-18deg);animation:orbit 15s linear infinite}.orbit.o2{width:65vw;height:40vw;transform:rotate(55deg);animation-duration:23s}.orbit.o3{width:95vw;height:18vw;transform:rotate(9deg);animation-duration:30s}
+@keyframes orbit{to{transform:rotate(342deg)}}
+.loginCard{position:relative;z-index:5;width:min(92vw,530px);padding:38px;border-radius:30px;border:1px solid #ffffff1a;background:linear-gradient(145deg,#15151dcc,#08090ddd);backdrop-filter:blur(26px);box-shadow:0 40px 120px #000b;overflow:hidden}.loginCard:before{content:"";position:absolute;left:10%;top:0;width:80%;height:2px;background:linear-gradient(90deg,transparent,#ff6d87,transparent);box-shadow:0 0 30px #ff315b;animation:scan 4s infinite}.loginCard h1{font-size:clamp(48px,6vw,72px);line-height:.88;letter-spacing:-.08em;margin:15px 0 18px}.loginCard p{color:#aeb0bb;font-size:13px;line-height:1.65}.loginStatus{display:flex;align-items:center;gap:8px;color:#9295a2;font:500 9px "DM Mono";letter-spacing:.1em;margin:22px 0 2px}.live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 15px var(--green);animation:live 1.2s infinite}.clock{margin-left:auto;color:#60636e}
+@keyframes live{50%{transform:scale(1.7);opacity:.45}}@keyframes scan{50%{transform:translateX(8%);opacity:.5}}
+.field{margin-top:18px}.field label{display:block;margin-bottom:8px;color:#b8bac4;font:500 10px "DM Mono";letter-spacing:.12em}.field input,.field select{width:100%;border:1px solid #ffffff16;background:#ffffff07;color:#fff;outline:none;padding:15px 16px;border-radius:14px}.field input:focus,.field select:focus{border-color:#ff5675;box-shadow:0 0 0 4px #ff315b14}.pass{position:relative}.pass input{padding-right:62px}.show{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;color:#999;font:500 10px "DM Mono"}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0 10px;color:#626570;font:500 9px "DM Mono"}.divider:before,.divider:after{content:"";height:1px;background:#fff1;flex:1}
+.registerBtn{width:100%;border:1px solid #ff5a7466;background:#ff315b08;color:#ff9aac;border-radius:14px;padding:14px;font:700 10px "DM Mono";letter-spacing:.07em;transition:.25s}.registerBtn:hover{background:#ff315b15;transform:translateY(-2px)}
+.loginFoot{text-align:center!important;color:#686b76!important;font-size:10px!important;margin-top:12px!important}
+
+#app{opacity:0;visibility:hidden;transition:opacity .7s}.app-show{opacity:1!important;visibility:visible!important}
+nav{position:fixed;z-index:60;left:0;right:0;top:0;height:78px;padding:0 6vw;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#050508ee,transparent);backdrop-filter:blur(9px)}.links{display:flex;gap:28px;color:#999ca7;font-size:12px}.links a:hover{color:#fff}.navRight{display:flex;gap:8px}.menu{display:none}
+.hero{min-height:100vh;padding:135px 7vw 70px;display:grid;grid-template-columns:1.05fr .95fr;gap:4vw;align-items:center}.hero h2{font-size:clamp(70px,9vw,148px);line-height:.82;letter-spacing:-.09em;margin:18px 0 22px}.hero h2 em{font-style:normal;color:#ff456b}.lead{max-width:540px;color:#a3a6b1;font-size:15px;line-height:1.75}.heroBtns{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}.heroVisual{height:650px;display:grid;place-items:center;position:relative;perspective:1000px}.heroCell{width:min(42vw,580px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 28%,#ffd2d9 0 2%,#ff8098 8%,#ef2f58 27%,#a20c32 54%,#3c0614 76%,#070509 77%);box-shadow:inset 50px 45px 90px #ffc1cb44,inset -60px -70px 110px #190008,0 0 150px #ff315b55;animation:cell 8s ease-in-out infinite}.heroCell:after{content:"";position:absolute;width:38%;aspect-ratio:1;border-radius:50%;background:#4e061b;box-shadow:inset 30px 30px 50px #160006}.heroOrbit{position:absolute;width:110%;height:35%;border:1px solid #ff5d7735;border-radius:50%;transform:rotate(-24deg);animation:heroSpin 16s linear infinite}.heroOrbit:nth-child(2){width:90%;height:62%;transform:rotate(56deg);animation-duration:24s}.heroOrbit:nth-child(3){width:125%;height:23%;transform:rotate(8deg);animation-duration:30s}@keyframes heroSpin{to{transform:rotate(336deg)}}
+.floatCard{position:absolute;padding:12px 15px;border:1px solid #ffffff16;border-radius:14px;background:#0a0b10bb;backdrop-filter:blur(14px);font-size:10px;box-shadow:0 20px 50px #0008}.floatCard b{font-size:12px}.fc1{right:5%;top:15%}.fc2{left:0;bottom:15%}.fc3{right:-3%;top:48%}
+.stats{padding:0 7vw 100px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stat{padding:27px;border:1px solid var(--line);border-radius:22px;background:#fff3}.stat strong{font-size:35px;letter-spacing:-.06em}.stat small{display:block;color:#858894;margin-top:6px}
+.section{padding:125px 7vw;background:linear-gradient(#050508,#08090d,#050508)}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:35px;margin-bottom:45px}.sectionHead h3{font-size:clamp(45px,6vw,82px);line-height:.88;letter-spacing:-.075em;margin:0}.sectionHead p{max-width:390px;color:#898c97;font-size:13px;line-height:1.7}
+.search{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:13px;border:1px solid var(--line);border-radius:24px;background:#ffffff04}.search select,.search input{border:1px solid #ffffff12;background:#0e0f14;color:#fff;padding:16px;border-radius:13px;outline:none}.search .btn{border-radius:13px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.donor{padding:23px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#ffffff08,#ffffff03);transition:.3s}.donor:hover{transform:translateY(-6px);border-color:#ff315b66}.donorTop{display:flex;justify-content:space-between;align-items:center}.avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#ff315b18;color:#ff7088;font-weight:800}.group{color:#ff7289;font:500 13px "DM Mono"}.donor h4{margin:20px 0 5px}.donor p{margin:0;color:#858893;font-size:11px}.available{margin-top:15px;color:#58dfa1;font:500 9px "DM Mono";letter-spacing:.08em}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.step{min-height:260px;padding:27px;border:1px solid var(--line);border-radius:23px;background:#ffffff03;overflow:hidden;position:relative}.step:after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;right:-90px;bottom:-100px;background:#ff315b16;filter:blur(10px)}.num{color:#ff7188;font:500 10px "DM Mono"}.step h4{font-size:27px;letter-spacing:-.05em;margin-top:80px}.step p{color:#838691;font-size:12px;line-height:1.65}
+.emergency{padding:95px 7vw}.emCard{min-height:340px;padding:58px;border-radius:34px;border:1px solid #ff315b55;background:radial-gradient(circle at 85% 30%,#ff315b2c,transparent 35%),linear-gradient(135deg,#14070c,#08090d);position:relative;overflow:hidden}.emCard h3{font-size:clamp(48px,7vw,92px);line-height:.85;letter-spacing:-.08em;margin:15px 0;max-width:780px}.emCard p{max-width:520px;color:#9b9da7;line-height:1.7;font-size:13px}.pulse{position:absolute;right:9%;top:50%;width:240px;height:240px;border:1px solid #ff567555;border-radius:50%;transform:translateY(-50%);animation:pulse 2.5s infinite}.pulse:before,.pulse:after{content:"";position:absolute;inset:22%;border:1px solid #ff567555;border-radius:50%;animation:pulse 2.5s infinite .5s}.pulse:after{inset:44%;background:#ff315b;box-shadow:0 0 50px #ff315b}@keyframes pulse{0%{transform:translateY(-50%) scale(.65);opacity:1}100%{transform:translateY(-50%) scale(1.35);opacity:0}}
+footer{padding:55px 7vw 75px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#70737e;font-size:11px}
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#000c;backdrop-filter:blur(16px);opacity:0;visibility:hidden;transition:.3s}.modal.open{opacity:1;visibility:visible}.modalBox{width:min(92vw,540px);padding:35px;border-radius:28px;border:1px solid #ffffff1a;background:#0c0d12ef;box-shadow:0 40px 120px #000;transform:translateY(25px) scale(.97);transition:.35s}.modal.open .modalBox{transform:none}.close{float:right;border:1px solid #ffffff18;background:#fff1;color:#aaa;border-radius:50%;width:34px;height:34px}.regGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:fixed;z-index:120;right:22px;bottom:22px;padding:14px 17px;border:1px solid #ffffff1a;border-radius:14px;background:#111218ed;backdrop-filter:blur(15px);font-size:11px;transform:translateY(30px);opacity:0;transition:.3s}.toast.on{transform:none;opacity:1}
+.reveal{opacity:0;transform:translateY(28px)}.reveal.visible{animation:reveal .75s var(--ease) forwards}@keyframes reveal{to{opacity:1;transform:none}}
+@media(max-width:900px){nav{padding:0 5vw}.navRight .btn.primary{display:none}.navRight .menu{display:block}.links{display:none}.menu{display:block}.hero{grid-template-columns:1fr;padding-top:120px}.heroVisual{height:480px;order:-1}.heroCell{width:min(72vw,500px)}.stats,.cards,.steps{grid-template-columns:1fr}.search{grid-template-columns:1fr}.search .btn{width:100%}.sectionHead{display:block}.sectionHead p{margin-top:20px}.pulse{opacity:.28;right:-70px}.loginCard{padding:29px}.cell{width:290px;left:-80px;top:14%}.register-grid{grid-template-columns:1fr}.emCard{padding:38px}}
+
+.mobileNav{display:none;position:fixed;top:70px;left:5vw;right:5vw;z-index:61;padding:14px;border:1px solid #ffffff18;border-radius:18px;background:#0b0c11f5;backdrop-filter:blur(20px);box-shadow:0 25px 70px #0008}.mobileNav.open{display:grid;gap:4px}.mobileNav a{padding:13px;color:#aaa;font-size:12px;border-radius:10px}.mobileNav a:hover{background:#fff1;color:#fff}.profileChip{display:inline-flex;align-items:center;gap:7px;margin-left:8px;padding:7px 10px;border:1px solid #ffffff12;border-radius:999px;color:#aeb0bb;font:500 9px "DM Mono",monospace;letter-spacing:.06em}.profileDot{width:6px;height:6px;border-radius:50%;background:#58e1a1;box-shadow:0 0 10px #58e1a1}.requestCard{position:relative;padding:23px;border:1px solid #ff315b35;border-radius:22px;background:linear-gradient(145deg,#ff315b09,#ffffff03)}.requestBadge{display:inline-block;padding:5px 8px;border-radius:999px;background:#ff315b15;color:#ff8195;font:500 9px "DM Mono",monospace;letter-spacing:.08em}.requestCard h4{margin:16px 0 5px}.requestCard p{color:#858893;font-size:11px;line-height:1.6;margin:0}.requestEmpty{padding:30px;border:1px dashed #ffffff16;border-radius:20px;color:#777b86;font-size:12px}
+</style>
+</head>
+<body>
+<div class="grid"></div><div class="noise"></div><div class="cursor"></div><div class="cursorDot"></div>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="loginHalo"></div><div class="orbit"></div><div class="orbit o2"></div><div class="orbit o3"></div><div class="cell" id="loginCell"></div>
+  <div class="loginCard">
+    <div class="logo">RAKT<span>SETU</span></div>
+    <div class="loginStatus"><i class="live"></i> DONOR NETWORK ONLINE <span class="clock" id="clock">00:00:00</span></div>
+    <div class="eyebrow">A SECURE HUMAN CONNECTION</div>
+    <h1>Save a life.<br>Start here.</h1>
+    <p>Find compatible donors, create urgent requests and keep your donor profile ready when it matters.</p>
+    <form id="loginForm">
+      <div class="field"><label>EMAIL / MOBILE</label><input id="identity" required placeholder="Enter email or mobile"></div>
+      <div class="field"><label>PASSWORD</label><div class="pass"><input id="password" type="password" minlength="4" required placeholder="Enter password"><button class="show" type="button" id="show">SHOW</button></div></div>
+      <button class="btn primary block" type="submit">ENTER DONOR NETWORK&nbsp; →</button>
+    </form>
+    <div class="divider">NEW TO RAKTSETU?</div>
+    <button class="registerBtn" id="openRegister">CREATE DONOR ACCOUNT&nbsp; +</button>
+    <p class="loginFoot">Secure account session • Passwords are hashed on the server.</p>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal" id="register">
+  <div class="modalBox">
+    <button class="close" id="closeRegister">×</button>
+    <div class="logo">RAKT<span>SETU</span></div>
+    <div class="eyebrow" style="margin-top:28px">JOIN THE DONOR NETWORK</div>
+    <h2 style="font-size:43px;line-height:.9;letter-spacing:-.07em;margin:13px 0">Become<br>a donor.</h2>
+    <p style="color:#858893;font-size:12px;line-height:1.6">Create a profile. Your new donor card will appear instantly in the finder.</p>
+    <form id="registerForm">
+      <div class="regGrid">
+        <div class="field"><label>FULL NAME</label><input id="rName" required placeholder="Your name"></div>
+        <div class="field"><label>BLOOD GROUP</label><select id="rGroup" required><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      </div>
+      <div class="field"><label>EMAIL / MOBILE</label><input id="rContact" required placeholder="Email or mobile"></div>
+      <div class="field"><label>CITY</label><input id="rCity" required placeholder="City"></div>
+      <div class="regGrid">
+        <div class="field"><label>PASSWORD</label><input id="rPassword" type="password" minlength="6" required placeholder="Minimum 6 characters"></div>
+        <div class="field"><label>CONFIRM PASSWORD</label><input id="rConfirm" type="password" minlength="6" required placeholder="Repeat password"></div>
+      </div>
+      <button class="btn primary block" type="submit">CREATE DONOR PROFILE&nbsp; →</button>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<nav>
+  <a class="logo" href="#home">RAKT<span>SETU</span></a>
+  <div class="links" id="navLinks"><a href="#find">Find Donor</a><a href="#how">How it works</a><a href="#emergency">Emergency</a><a href="#requests">My requests</a></div>
+  <div class="navRight"><button class="btn" id="logout">Log out</button><a class="btn primary" href="#find">Find blood</a><button class="btn menu" id="menuBtn">☰</button></div>
+</nav>
+<div class="mobileNav" id="mobileNav"><a href="#find">Find Donor</a><a href="#how">How it works</a><a href="#emergency">Emergency</a><a href="#requests">My requests</a></div>
+
+<section class="hero" id="home">
+  <div>
+    <div class="eyebrow">WHEN EVERY MINUTE MATTERS</div>
+    <h2>Blood when<br>it <em>matters.</em></h2>
+    <p class="lead">RaktSetu brings compatible blood donors closer to patients through a focused, fast and human-first network.</p>
+    <div class="heroBtns"><a class="btn primary" href="#find">Find a donor&nbsp; →</a><a class="btn" href="#how">See how it works</a></div>
+  </div>
+  <div class="heroVisual" id="heroVisual">
+    <div class="heroOrbit"></div><div class="heroOrbit"></div><div class="heroOrbit"></div><div class="heroCell"></div>
+    <div class="floatCard fc1">● LIVE NETWORK<br><b>Donors nearby</b></div>
+    <div class="floatCard fc2">COMPATIBILITY<br><b>Blood group first</b></div>
+    <div class="floatCard fc3">RESPONSE<br><b>Request → connect</b></div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat reveal"><strong>8</strong><small>Blood groups supported</small></div>
+  <div class="stat reveal"><strong>24/7</strong><small>Emergency request flow</small></div>
+  <div class="stat reveal"><strong>1:1</strong><small>Donor-to-request connection</small></div>
+</div>
+
+<section class="section" id="find">
+  <div class="sectionHead reveal"><h3>Find the right donor.<br>Without the noise.</h3><p>Choose a blood group and city to search the donor network. Searches the live server database for currently available donors.</p></div>
+  <div class="search reveal">
+    <select id="group"><option value="">Blood group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+    <input id="city" placeholder="City / location">
+    <button class="btn primary" id="search">SEARCH DONORS</button>
+  </div>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section class="section" id="how">
+  <div class="sectionHead reveal"><h3>From request<br>to connection.</h3><p>A simple flow for the moments when every minute matters.</p></div>
+  <div class="steps">
+    <article class="step reveal"><div class="num">01 / REQUEST</div><h4>Tell us what is needed.</h4><p>Select blood group and location. Add urgency details to create a focused request.</p></article>
+    <article class="step reveal"><div class="num">02 / MATCH</div><h4>See compatible donors.</h4><p>Filter the network by blood group and location, then review donor availability.</p></article>
+    <article class="step reveal"><div class="num">03 / CONNECT</div><h4>Reach out securely.</h4><p>Send a request and coordinate the donation through your verified contact flow.</p></article>
+  </div>
+</section>
+
+<section class="section" id="requests">
+  <div class="sectionHead reveal"><h3>Your requests.<br>One place.</h3><p>Requests are stored on the server so you can review them after signing in again.</p></div>
+  <div class="cards" id="requestCards"></div>
+</section>
+
+<section class="emergency" id="emergency">
+  <div class="emCard reveal"><div class="pulse"></div><div class="eyebrow">URGENT REQUEST</div><h3>Someone needs blood.<br>Be the connection.</h3><p>Create an urgent request with the required blood group, city, hospital and contact details. The request is stored on the server and can be acted on by the selected donor.</p><button class="btn primary" id="emergencyBtn" style="margin-top:24px">CREATE EMERGENCY REQUEST&nbsp; →</button></div>
+</section>
+
+<footer><span>© 2026 RaktSetu</span><span>Find blood • Save lives • Build the connection</span></footer>
+</div>
+<div class="modal" id="requestModal">
+  <div class="modalBox">
+    <button class="close" id="closeRequest">×</button>
+    <div class="logo">RAKT<span>SETU</span></div>
+    <div class="eyebrow" style="margin-top:28px">URGENT BLOOD REQUEST</div>
+    <h2 id="requestTitle" style="font-size:39px;line-height:.9;letter-spacing:-.07em;margin:13px 0">Create a request.</h2>
+    <form id="requestForm">
+      <div class="regGrid">
+        <div class="field"><label>PATIENT NAME</label><input id="pName" required placeholder="Patient name"></div>
+        <div class="field"><label>BLOOD GROUP</label><select id="pGroup" required><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      </div>
+      <div class="regGrid">
+        <div class="field"><label>CITY</label><input id="pCity" required placeholder="City"></div>
+        <div class="field"><label>UNITS NEEDED</label><input id="pUnits" type="number" min="1" max="20" value="1" required></div>
+      </div>
+      <div class="field"><label>HOSPITAL / LOCATION</label><input id="pHospital" required placeholder="Hospital or collection point"></div>
+      <div class="field"><label>CONTACT NUMBER</label><input id="pContact" inputmode="tel" required placeholder="10-digit mobile number"></div>
+      <div class="field"><label>URGENCY</label><select id="pUrgency"><option>Urgent</option><option>High</option><option>Normal</option></select></div>
+      <button class="btn primary block" type="submit">POST BLOOD REQUEST&nbsp; →</button>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+let audio;
+function beep(type='click'){try{audio ||= new (window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime,f={hover:680,click:430,success:560,open:190}[type]||430,d={hover:.025,click:.055,success:.22,open:.12}[type]||.05;o.connect(g);g.connect(audio.destination);o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.045,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start();o.stop(t+d+.03)}catch(e){}}
+document.addEventListener('pointerover',e=>{if(e.target.closest('button,a'))beep('hover')});document.addEventListener('click',e=>{if(e.target.closest('button,a'))beep('click')});
+const login=$('#login'),app=$('#app');let currentUser=null,selectedDonor=null;
+function enter(){beep('success');$('.loginCard').animate([{transform:'scale(1)',opacity:1},{transform:'scale(1.04)',opacity:0}],{duration:500,easing:'cubic-bezier(.2,.8,.2,1)'});setTimeout(()=>{login.classList.add('login-hidden');app.classList.add('app-show');document.body.style.overflow='auto';location.hash='#home'},250)}
+function leave(){app.classList.remove('app-show');login.classList.remove('login-hidden');document.body.style.overflow='hidden';$('#password').value=''}
+function toast(t){let x=$('#toast');x.textContent=t;x.classList.add('on');setTimeout(()=>x.classList.remove('on'),3000)}
+async function api(path,opts={}){let r;try{r=await fetch(path,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts})}catch(e){throw new Error('Server se connection nahi ho pa raha. Kya RaktSetu server chal raha hai?')}
+ let data={};try{data=await r.json()}catch{}if(!r.ok)throw new Error(data.error||'Something went wrong');return data}
+function clock(){let d=new Date();$('#clock').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':')}clock();setInterval(clock,1000);
+$('#show').onclick=()=>{$('#password').type=$('#password').type==='password'?'text':'password';$('#show').textContent=$('#password').type==='password'?'SHOW':'HIDE'};
+const register=$('#register');$('#openRegister').onclick=()=>{register.classList.add('open');beep('open')};$('#closeRegister').onclick=()=>register.classList.remove('open');register.addEventListener('click',e=>{if(e.target===register)register.classList.remove('open')});
+$('#registerForm').addEventListener('submit',async e=>{e.preventDefault();let b={name:$('#rName').value.trim(),group:$('#rGroup').value,contact:$('#rContact').value.trim(),city:$('#rCity').value.trim(),password:$('#rPassword').value};if(b.password!==$('#rConfirm').value)return toast('Passwords do not match');try{let d=await api('/api/register',{method:'POST',body:JSON.stringify(b)});currentUser=d.user;register.classList.remove('open');setProfile();enter();await loadAll();toast('Account created successfully')}catch(err){toast(err.message)}});
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{let d=await api('/api/login',{method:'POST',body:JSON.stringify({contact:$('#identity').value.trim(),password:$('#password').value})});currentUser=d.user;setProfile();enter();await loadAll();toast('Welcome back, '+currentUser.name.split(/\s+/)[0])}catch(err){toast(err.message)}});
+$('#logout').onclick=async()=>{try{await api('/api/logout',{method:'POST'})}catch{}currentUser=null;leave();toast('Signed out')};
+function setProfile(){const old=document.querySelector('.profileChip');if(old)old.remove();if(!currentUser)return;let chip=document.createElement('span');chip.className='profileChip';chip.innerHTML='<i class="profileDot"></i>'+currentUser.name.split(/\s+/)[0].toUpperCase();$('.navRight').insertBefore(chip,$('#logout'))}
+function donorCard(d){let a=document.createElement('article');a.className='donor reveal visible';a.innerHTML=`<div class="donorTop"><div class="avatar">${d.name.split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()}</div><span class="group">${d.group}</span></div><h4>${escapeHtml(d.name)}</h4><p>${escapeHtml(d.city)} • Available now</p><div class="available">● AVAILABLE TO CONNECT</div><button class="btn" style="width:100%;margin-top:17px">REQUEST DONOR</button>`;a.querySelector('button').onclick=()=>openRequest(d);return a}
+function escapeHtml(x){return String(x).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
+async function searchDonors(){let g=$('#group').value,c=$('#city').value.trim();try{let d=await api('/api/donors?'+new URLSearchParams({group:g,city:c}));$('#cards').innerHTML='';if(!d.donors.length){$('#cards').innerHTML='<p style="color:#858894">No available donors matched this search.</p>'}else d.donors.forEach(x=>$('#cards').appendChild(donorCard(x)));toast(d.donors.length+' available donor'+(d.donors.length===1?'':'s')+' found')}catch(e){toast(e.message)}}
+$('#search').onclick=()=>{searchDonors();document.querySelector('#find').scrollIntoView({behavior:'smooth'})};
+function openRequest(d){selectedDonor=d||null;$('#requestTitle').textContent=d?'Request '+d.name+'.':'Create an urgent request.';$('#pGroup').value=d?.group||$('#group').value||'';$('#requestModal').classList.add('open');beep('open')}
+$('#closeRequest').onclick=()=>$('#requestModal').classList.remove('open');$('#requestModal').addEventListener('click',e=>{if(e.target.id==='requestModal')$('#requestModal').classList.remove('open')});$('#emergencyBtn').onclick=()=>openRequest(null);
+$('#requestForm').addEventListener('submit',async e=>{e.preventDefault();let b={patient:$('#pName').value.trim(),group:$('#pGroup').value,city:$('#pCity').value.trim(),units:Number($('#pUnits').value),hospital:$('#pHospital').value.trim(),contact:$('#pContact').value.trim(),urgency:$('#pUrgency').value,donorId:selectedDonor?.id||null};try{await api('/api/requests',{method:'POST',body:JSON.stringify(b)});$('#requestModal').classList.remove('open');e.target.reset();selectedDonor=null;await loadRequests();toast(b.donorId?'Request sent to selected donor':'Emergency request posted to the network')}catch(err){toast(err.message)}});
+function requestActions(r){let s='';if(r.canClaim)s+='<button class="btn actionClaim">RESPOND AS DONOR</button>';if(r.donorId&&['pending','accepted'].includes(r.status)){if(r.status==='pending')s+='<button class="btn actionAccept">ACCEPT</button><button class="btn actionReject">DECLINE</button>';if(r.status==='accepted')s+='<button class="btn actionComplete">MARK COMPLETED</button>'}if(!r.donorId&&r.status==='open')s+='<button class="btn actionCancel">CANCEL</button>';return s}
+async function loadRequests(){try{let d=await api('/api/requests');let box=$('#requestCards');box.innerHTML='';if(!d.requests.length){box.innerHTML='<div class="requestEmpty">No requests yet. Create an emergency request or request a donor.</div>';return}d.requests.forEach(r=>{let a=document.createElement('article');a.className='requestCard reveal visible';let contact=r.donor?.contact||r.contact||'';a.innerHTML=`<span class="requestBadge">${escapeHtml(r.urgency.toUpperCase())} • ${r.group} • ${r.status.toUpperCase()}</span><h4>${escapeHtml(r.patient)}</h4><p>${escapeHtml(r.city)} • ${escapeHtml(r.hospital)}<br>${r.units} unit${r.units==1?'':'s'} needed${contact?'<br>Contact: '+escapeHtml(contact):''}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${requestActions(r)}</div>`;let bind=(sel,status)=>{let b=a.querySelector(sel);if(b)b.onclick=async()=>{try{await api('/api/requests/'+r.id,{method:'PATCH',body:JSON.stringify({status})});await loadRequests();toast('Request updated')}catch(e){toast(e.message)}}};bind('.actionAccept','accepted');bind('.actionReject','rejected');bind('.actionComplete','completed');bind('.actionCancel','cancelled');let claim=a.querySelector('.actionClaim');if(claim)claim.onclick=async()=>{try{await api('/api/requests/'+r.id+'/claim',{method:'POST'});await loadRequests();toast('You responded to the blood request')}catch(e){toast(e.message)}};box.appendChild(a)})}catch(e){toast(e.message)}}
+async function loadAll(){await searchDonors();await loadRequests()}
+$('#menuBtn').onclick=()=>$('#mobileNav').classList.toggle('open');$('#mobileNav').querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>$('#mobileNav').classList.remove('open')));document.addEventListener('keydown',e=>{if(e.key==='Escape'){register.classList.remove('open');$('#requestModal').classList.remove('open');$('#mobileNav').classList.remove('open')}});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(x=>io.observe(x));
+const cur=$('.cursor'),dot=$('.cursorDot');addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px'});document.addEventListener('pointerover',e=>{if(e.target.closest('button,a')){cur.style.width='32px';cur.style.height='32px'}});document.addEventListener('pointerout',e=>{if(e.target.closest('button,a')){cur.style.width='18px';cur.style.height='18px'}});
+document.addEventListener('mousemove',e=>{let x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);$('#loginCell').style.transform=`translate(${x*28}px,${y*20}px)`;$('.heroCell').style.transform=`translate(${x*18}px,${y*14}px)`});
+for(let i=0;i<48;i++){let p=document.createElement('i');p.style.cssText=`position:fixed;z-index:1;width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;border-radius:50%;background:#ff6b85;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${.12+Math.random()*.45};box-shadow:0 0 12px #ff315b;pointer-events:none`;document.body.appendChild(p);p.animate([{transform:'translateY(0)'},{transform:`translate(${(Math.random()-.5)*100}px,${-80-Math.random()*240}px)`}],{duration:3500+Math.random()*5500,iterations:Infinity,direction:'alternate',easing:'ease-in-out',delay:-Math.random()*6000})}
+(async()=>{try{let d=await api('/api/me');currentUser=d.user;setProfile();login.classList.add('login-hidden');app.classList.add('app-show');document.body.style.overflow='auto';await loadAll()}catch{document.body.style.overflow='hidden'}})();
+</script>
+</body>
+</html>
