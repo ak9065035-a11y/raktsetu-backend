@@ -96,4 +96,4 @@ const server=http.createServer(async(req,res)=>{
     let p=path.normalize(path.join(PUBLIC,u.pathname==='/'?'index.html':u.pathname));if(!p.startsWith(PUBLIC))return send(res,403,{error:'Forbidden'});if(!fs.existsSync(p)||fs.statSync(p).isDirectory())p=path.join(PUBLIC,'index.html');res.writeHead(200,{'Content-Type':mime[path.extname(p)]||'application/octet-stream'});fs.createReadStream(p).pipe(res);
   }catch(e){console.error(e);if(!res.headersSent)send(res,500,{error:'Server error'});}
 });
-server.listen(PORT,HOST,()=>console.log(`RaktSetu running at http://${HOST}:${PORT}`));
+server.listen(process.env.PORT || PORT, () => console.log("RaktSetu is LIVE on cloud!"));
