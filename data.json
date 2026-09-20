@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "id": "985137ba-e462-4411-83b8-7097fddebd32",
+      "name": "ashik khan",
+      "contact": "9876543210",
+      "city": "kota",
+      "group": "AB+",
+      "passwordHash": "a895dd062fc8ebb16ffe7cf2558b433b:9359e87006444004f2672426dfc3f2277f966d8fb860418fd3c1ac377530cba0d10d5ee368c63a9fa004f604e5d1e96aad6177421cb2119df5f6bc95595ba8df",
+      "createdAt": "2026-09-20T06:12:32.483Z"
+    }
+  ],
+  "donors": [
+    {
+      "id": "6867c268-49ca-4ad2-8bbb-3b14f751cc3b",
+      "userId": "985137ba-e462-4411-83b8-7097fddebd32",
+      "name": "ashik khan",
+      "contact": "9876543210",
+      "group": "AB+",
+      "city": "kota",
+      "available": true,
+      "createdAt": "2026-09-20T06:12:32.484Z"
+    }
+  ],
+  "requests": []
+}
